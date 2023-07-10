@@ -154,6 +154,38 @@ fn ownership() {
     let new_u32_slice = u32_slice;
 
     // println!("str_slice = {:?}, str_slice_new = {:?}, u32_slice = {:?}, new_u32_slice = {:?}", str_slice, str_slice_new, u32_slice, new_u32_slice); error: move value
+    
+    // 独占资源
+
+    let mut dynamic_source = String::from("content");
+
+    let role1 = dynamic_source;
+    let role2 = role1;
+
+    // 避免资源被多个变量同时访问，导致资源被修改
+
+    // 所有权与共享容器Rc<T>, 它适用于单线程
+    // 使用共享容器包裹动态资源
+    use std::rc::Rc;
+    use std::sync::Arc;
+    let mut dynamic_source = vec![1, 2, 3];
+    let mut container = Rc::new(dynamic_source);
+   
+    let mut role1 = (*container).clone();
+    role1.push(1);
+    let role2 = container.clone();
+
+    println!("container = {:?}, role1 = {:?}, role2 = {:?}", container, role1, role2); // 通过共享容器访问资源，此时共享资源有三个所有者，可以同时访问
+
+    // 多线程Arc<T>
+    let dynamic_source = String::from("rust");
+    let container = Arc::new(dynamic_source);
+
+    let role1 = container.clone();
+    let role2 = container.clone();
+
+    println!("container = {:?}, role1 = {:?}, role2 = {:?}", container, role1, role2);
+
 
 
 }
