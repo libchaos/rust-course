@@ -203,10 +203,10 @@ fn ownership() {
         // 引用计数管理
 
         let str = String::from("hello");
-        let container = Rc::new(str);
+        let container = Rc::new(str);  // 引用计数+1
 
-        let role1 = container.clone();  //+1
-        let role2 = container.clone();  //+1
+        let role1 = container.clone();  //引用计数+1
+        let role2 = container.clone();  //引用计数+1
 
         println!("container = {:?}, role1 = {:?}, role2 = {:?}", container, role1, role2);
 
@@ -217,6 +217,20 @@ fn ownership() {
 }
 
 
+fn borrow() {
+    let mut s = String::from("hello"); // 对于s来说它将值借给了s_p
+    let s_p = &mut s; // 对于s_p来说它将借用了s的值
+    // let s_p1 = &mut s;
+    s_p.push('a');
+    println!("s = {}, s_p = {:p}", *s_p, s_p);
+
+    *s_p = String::from("java is coming,  let me show me how to do!!");
+
+    println!("new_s = {}, s_p = {:p}", *s_p, s_p);
+
+
+
+}
 
 
 
@@ -233,4 +247,7 @@ fn main() {
 
 
     ownership();
+
+
+    borrow();
 }
