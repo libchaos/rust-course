@@ -168,8 +168,8 @@ fn ownership() {
     // 使用共享容器包裹动态资源
     use std::rc::Rc;
     use std::sync::Arc;
-    let mut dynamic_source = vec![1, 2, 3];
-    let mut container = Rc::new(dynamic_source);
+    let dynamic_source = vec![1, 2, 3];
+    let container = Rc::new(dynamic_source);
    
     let mut role1 = (*container).clone();
     role1.push(1);
@@ -185,6 +185,32 @@ fn ownership() {
     let role2 = container.clone();
 
     println!("container = {:?}, role1 = {:?}, role2 = {:?}", container, role1, role2);
+
+    // Arc 和 rc 实际上是一种引用计数，每次使用clone一次，引用计数就会+1，当变量离开作用域时，计数就会-1，当引用计数为0的时候，堆内存就会释放。
+    // 从编译器来看，每个变量都拥有一个rc或者arc，所以并不违反所有权规则
+
+    // 一般情况下，rust使用栈来管理堆内存，但是rc和arc是一种特殊的机制，他允许不受栈内存控制的堆内存，就是允许内存泄漏，对着这种泄漏通过引用计数来管理
+    // 栈内存管理堆内存
+    {
+        let source = String::from("hello");
+        let source2 = source;
+        println!("{:?}", source2);
+        // 丢弃
+        // 当source2离开作用域会立即丢弃source2和堆上数据
+    }
+
+    {
+        // 引用计数管理
+
+        let str = String::from("hello");
+        let container = Rc::new(str);
+
+        let role1 = container.clone();  //+1
+        let role2 = container.clone();  //+1
+
+        println!("container = {:?}, role1 = {:?}, role2 = {:?}", container, role1, role2);
+
+    }
 
 
 
