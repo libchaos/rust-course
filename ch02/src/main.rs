@@ -219,7 +219,7 @@ fn ownership() {
 
 fn borrow() {
     let mut s = String::from("hello"); // 对于s来说它将值借给了s_p
-    let s_p = &mut s; // 对于s_p来说它将借用了s的值
+    let s_p = &mut s; // 对于s_p来说它引用了s的值
     // let s_p1 = &mut s;
     s_p.push('a');
     println!("s = {}, s_p = {:p}", *s_p, s_p);
@@ -228,8 +228,30 @@ fn borrow() {
 
     println!("new_s = {}, s_p = {:p}", *s_p, s_p);
 
+    {
+        let c = 'a';
+        let c_p = &c;
+        println!("c = {}, c_p = {:p}", c, c_p);
+        // c_p 释放
+    }
+
+}
 
 
+fn lifetime() {
+    // 变量生命周期是指 从声明开始到离开作用域
+
+    let x = 32; // x的生命周期开始
+    println!("x = {}", x);
+
+    {
+        let xptr = &x;
+        println!("xptr = {:p}", xptr);
+        // xptr 的生命周期结束
+        
+    }
+    // println!("xptr = {:p}", xptr); 无法使用xptr,因为它已经被丢弃
+    // x 的生命周期结束，值会被丢弃
 }
 
 
